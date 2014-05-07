@@ -7,10 +7,13 @@ function ana_robot
 %% Code execution
 
 % Rose plot for elevation in global FOR 
-vis_el_global = 1;
+vis_el_global = 0;
 
 % Rose plot for azimuth in global FOR 
 vis_az_global = 1;
+
+% Group responses by binocular vision
+vis_az_binoc = 1;
 
 % Visualize the position of responses (visual system)
 vis_visResp = 0;
@@ -21,13 +24,14 @@ do_treat_groups = 0;
 % Distance boxplots (with and without light)
 do_distbox = 0;
 
-vis_rose_global = 1;
-
 % Exract visual statistics 
 vis_stats = 0;
 
 % Execute rose plots in global FOR
 do_global = 0;
+
+% Pool L/R responses in azimuth of responses
+do_LR_pool = 1;
 
 
 %% Parameters
@@ -437,7 +441,7 @@ else
 end
 
 
-%% Visulize rose plots of elevation in global FOR (vis_el_global)
+%% Visulize rose plots of elevation wrt speed (vis_el_global)
 
 if vis_el_global
     
@@ -525,7 +529,7 @@ if vis_el_global
 end % vis_el_global
 
 
-%% Visulize rose plots of elevation in global FOR (vis_az_global)
+%% Visulize rose plots of azimuth wrt speed (vis_az_global)
 
 if vis_az_global
     
@@ -536,7 +540,7 @@ if vis_az_global
     figure
     
     % Loop thru speeds
-    for i = 1:3
+    for i = 1:3       
         
         % Index for current speed
         idx = (D.behav=='f') & (D.spd==spds(i));
@@ -553,10 +557,16 @@ if vis_az_global
         for j = 1:length(idx)
             if idx(j)
                 
-                % Plot position at time of response & resp direction            
-                subplot(3,3,i)
+                % Plot position at time of response & resp direction 
+                if do_LR_pool
+                    subplot(2,3,i)
+                else
+                    subplot(3,3,i)
+                end
+                
                 h = plot([D.head(j,1) D.tail(j,1)],...
                          [D.head(j,2) D.tail(j,2)],'-');
+                     
                 if idx1(j)
                     set(h,'Color',clrs2{i})
                 elseif idx2(j)
@@ -595,73 +605,171 @@ if vis_az_global
             title(['Local FOR, ' num2str(spds(i)) 'cm/s'])
         end        
         
-        % Rose plot for when predator is on right
-        subplot(3,3,i+3)
-        if do_global
-            rose_plot(D.az(idx & idx1),D.wrong(idx & idx1),num_bin)  
+        % Rose plots with pooled responses
+        if do_LR_pool
+            
+            wrong_pool = [D.wrong(idx & idx1); D.wrong(idx & idx2)];
+            
+            % Pool responses (flip response of right eye stim)
+            if do_global
+               az_pool    = [-D.az(idx & idx1); D.az(idx & idx2)]; 
+            else
+               az_pool    = [-D.azL(idx & idx1); D.azL(idx & idx2)]; 
+            end
+            
+            subplot(2,3,i+3)
+            rose_plot(az_pool,wrong_pool,num_bin)
+            title('Response away from stim')
+            
+        % Rose plots with L and R separated
         else
-            rose_plot(D.azL(idx & idx1),D.wrong(idx & idx1),num_bin)
+            % Rose plot for when predator is on right
+            subplot(3,3,i+3)
+            if do_global
+                rose_plot(D.az(idx & idx1),D.wrong(idx & idx1),num_bin)
+            else
+                rose_plot(D.azL(idx & idx1),D.wrong(idx & idx1),num_bin)
+            end
+            
+            h = title('Predator on right (az)');
+            set(h,'Color',clrs2{i})
+            
+            % Rose plot for when predator on left
+            subplot(3,3,i+6)
+            if do_global
+                rose_plot(D.az(idx & idx2),D.wrong(idx & idx2),num_bin)
+            else
+                rose_plot(D.azL(idx & idx2),D.wrong(idx & idx2),num_bin)
+            end
+            
+            h = title('Predator on left (az)');
+            set(h,'Color',clrs3{i})
         end
-        
-        h = title('Predator on right (az)');
-        set(h,'Color',clrs2{i})
-        
-        % Rose plot for when predator on left
-        subplot(3,3,i+6)
-        if do_global
-            rose_plot(D.az(idx & ~idx1),D.wrong(idx & ~idx1),num_bin)
-        else
-            rose_plot(D.azL(idx & ~idx1),D.wrong(idx & ~idx1),num_bin)
-        end
-        
-        h = title('Predator on left (az)');
-        set(h,'Color',clrs3{i})
- 
     end
+    
+    clear az_pool
 end % vis_az_global
 
 
+%% Visulize rose plots of azimuth wrt binocular stim (vis_az_binoc)
 
-return
-
-
-%% Visulize rose plots of direction wrt body (vis_rose_local)
-
-if vis_rose_local
+if vis_az_binoc
     
+    % Create figure
     figure
     
-    % loop thru speeds
-    for i = 1:3
-       subplot(1,3,i) 
+    % Index for binocular stimulus
+    idxB = D.binoc & ~(D.behav=='f');
+    
+    % Index for left eye
+    idxL = ~D.binoc & ~isnan(D.LazCent) & ~(D.behav=='f');
+    
+    % Index for right eye
+    idxR = ~D.binoc & ~isnan(D.RazCent) & ~(D.behav=='f');
+    
+    % Loop thru individuals
+    for j = 1:length(D.spd)
+        if idxB(j)
+            subplot(2,3,1)
+            
+        elseif idxL(j)
+            subplot(2,3,2)
+        elseif idxR(j)
+            subplot(2,3,3)
+        end
         
-       rose_plot(L(i).az,L(i).wrong,num_bin)
-       title(['VISION, ' num2str(spds(i)) ' cm/s'])
-       
+        h = plot([D.head(j,1) D.tail(j,1)],...
+            [D.head(j,2) D.tail(j,2)],'-k');
+        hold on
+        h = plot(D.head(j,1),D.head(j,2),'ok');
+        set(h,'Color','k')
+        set(h,'MarkerFaceColor','k')
+        set(h,'MarkerSize',mSize)
+        h = plot([D.com(j,1) D.com2(j,1)],...
+            [D.com(j,2) D.com2(j,2)],'-');
+        set(h,'Color','r')
     end
-
-    % Plot direction (az) for rostrum/tail comparisons   
-    %rose_wrt_body(b,r,num_bin,index,r.spd_rost,r.spd_tail,'rost','tail','az')
     
-    % Plot direction (az) for left/right comparisons    
-    %rose_wrt_body(b,r,num_bin,index,r.spd_right,r.spd_left,'right','left','az')
+    axis equal; xlabel('X'); ylabel('Y');
+    
+    % Title
+    if do_global
+        title(['Global FOR'])
+    else
+        title(['Local FOR'])
+    end
+    
+    
+    % Rose plots (global FOR)
+    if do_global
+        subplot(2,3,4)
+        rose_plot(D.az(idxB),D.wrong(idxB),num_bin)
+        title('Binocular stimulus')
         
-    % Plot direction (az) for left/right comparisons with new 'wrong' calc (Bill) 
-    %figure
-    %rose_wrt_body2(b,r,num_bin,index,r.spd_right,r.spd_left,'az')
+        subplot(2,3,5)
+        rose_plot(D.az(idxL),D.wrong(idxL),num_bin)
+        title('Left eye stimulus')
+        
+        subplot(2,3,6)
+        rose_plot(D.az(idxR),D.wrong(idxR),num_bin)
+        title('Right eye stimulus')
+        
+        % Rose plots (local FOR)
+    else
+        subplot(2,3,4)
+        rose_plot(D.azL(idxB),D.wrong(idxB),num_bin)
+        title('Binocular stimulus')
+        
+        subplot(2,3,5)
+        rose_plot(D.azL(idxL),D.wrong(idxL),num_bin)
+        title('Left eye stimulus')
+        
+        subplot(2,3,6)
+        rose_plot(D.azL(idxR),D.wrong(idxR),num_bin)
+        title('Right eye stimulus')
+        
+    end
     
-    % Plot elevation rose plots in local FOR 
-    %figure
-    %el_rose_wrt_body(b,r,num_bin,index)
+    % Scatterplots of response wrt stimulus -------------------------------
     
-    % Plot direction (el) for dorsal/ventral comparisons    
-    %rose_wrt_body(b,r,num_bin,index,r.spd_dors,r.spd_vent,'dors','vent','el')
+    % Make figure window
+    figure
     
-    % Scatterplot of azimuth angles
-    %scatter_diff(r,index)
+    subplot(2,2,1)
+    plot(D.LazCent(idxB),D.az(idxB),'or', D.LazCent(idxL),D.az(idxL),'ob')
+    xlabel('angle of stimulus')
+    ylabel('Azimuth of resposne (global)')
+    title('Left Eye: GLOBAL')
+    legend('Binoc','One eye')
+    grid on
+    axis equal
     
+    subplot(2,2,3)
+    plot(D.LazCent(idxB),D.azL(idxB),'or', D.LazCent(idxL),D.azL(idxL),'ob')
+    xlabel('angle of stimulus')
+    ylabel('Azimuth of response (local)')
+    title('Left Eye: LOCAL')
+    grid on
+    axis equal
     
-end % vis_rose_local
+    subplot(2,2,2)
+    plot(D.RazCent(idxB),D.az(idxB),'or',D.RazCent(idxR),D.az(idxR),'ob')
+    xlabel('angle of stimulus')
+    ylabel('Azimuth of resposne (global)')
+    title('Right Eye: GLOBAL')
+    grid on
+    axis equal
+    
+    subplot(2,2,4)
+    plot(D.RazCent(idxB),D.azL(idxB),'or',D.RazCent(idxR),D.azL(idxR),'ob')
+    xlabel('angle of stimulus')
+    ylabel('Azimuth of response (local)')
+    title('Right Eye: LOCAL')
+    grid on
+    axis equal
+    
+    clear idxB idxR idxL
+end % vis_az_global
 
 
 
