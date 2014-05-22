@@ -10,7 +10,7 @@ function ana_robot
 vis_el_global = 0;
 
 % Rose plot for azimuth in global FOR 
-vis_az_global = 1;
+vis_az_global = 0;
 
 % Group responses by binocular vision
 vis_az_binoc = 1;
@@ -31,7 +31,7 @@ vis_stats = 0;
 do_global = 0;
 
 % Pool L/R responses in azimuth of responses
-do_LR_pool = 1;
+do_LR_pool = 0;
 
 
 %% Parameters
@@ -610,9 +610,9 @@ if vis_az_global
             
             wrong_pool = [D.wrong(idx & idx1); D.wrong(idx & idx2)];
             
-            % Pool responses (flip response of right eye stim)
+            % Pool responses (flip response of right eye stim, ONLY FOR LOCAL FOR)
             if do_global
-               az_pool    = [-D.az(idx & idx1); D.az(idx & idx2)]; 
+               az_pool    = [D.az(idx & idx1); D.az(idx & idx2)]; 
             else
                az_pool    = [-D.azL(idx & idx1); D.azL(idx & idx2)]; 
             end
@@ -659,13 +659,16 @@ if vis_az_binoc
     figure
     
     % Index for binocular stimulus
-    idxB = D.binoc & ~(D.behav=='f');
+    idxB = D.binoc & (D.behav=='f');
+    %idxB = D.binoc & (D.behav=='s');
     
     % Index for left eye
-    idxL = ~D.binoc & ~isnan(D.LazCent) & ~(D.behav=='f');
+    idxL = ~D.binoc & ~isnan(D.LazCent) & (D.behav=='f');
+    %idxL = ~D.binoc & ~isnan(D.LazCent) & (D.behav=='s');
     
     % Index for right eye
-    idxR = ~D.binoc & ~isnan(D.RazCent) & ~(D.behav=='f');
+    idxR = ~D.binoc & ~isnan(D.RazCent) & (D.behav=='f');
+    %idxR = ~D.binoc & ~isnan(D.RazCent) & (D.behav=='s');
     
     % Loop thru individuals
     for j = 1:length(D.spd)
