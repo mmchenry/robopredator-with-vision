@@ -14,7 +14,7 @@ pool_raw = 1;
 %% Paths
 
 % This should be specific to each computer that executes this code
-root = '/Users/mmchenry/Dropbox/Projects/Robopredator with vision';
+root = '/Users/arjunnair0513/Dropbox/Shared with Arjun';
 
 % Sequences providing response data for 2 cm/s
 dirs{1} = {['July_24' filesep '1'],...
