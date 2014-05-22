@@ -8,7 +8,7 @@ function vis_vision
 if isdir('/Users/mmchenry/')
     root = '/Users/mmchenry/Dropbox/Projects/Robopredator with vision';
 else
-    error('Replace this line of code with a root definition')
+    error('/Users/arjunnair0513/Dropbox/Shared with Arjun')
 end
 
 
