@@ -5,14 +5,18 @@ function vis_vision
 %% Set paths
 
 % This should be specific to each computer that executes this code
-root = '/Users/mmchenry/Dropbox/Projects/Robopredator with vision';
+if isdir('/Users/mmchenry/')
+    root = '/Users/mmchenry/Dropbox/Projects/Robopredator with vision';
+else
+    error('Replace this line of code with a root definition')
+end
 
 
 %% Code execution
 
 
 % Save frames for a movie
-save_images = 0;
+save_images = 1;
 
 % Clean look for presentations 
 vis_clean = 1;
