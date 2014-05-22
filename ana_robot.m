@@ -8,15 +8,9 @@ function ana_robot
 
 % Rose plot for elevation in global FOR 
 vis_el_global = 0;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 
 % Rose plot for azimuth in local FOR (Old way of sorting orientation)
 vis_az_local = 0;
-=======
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
 
 % Rose plot for azimuth in global FOR 
 vis_az_global = 1;
@@ -24,15 +18,9 @@ vis_az_global = 1;
 % Group responses by binocular vision
 vis_az_binoc = 1;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 %Scatterplot of stimulus angle vs. azimuth escape angle
 scatter_stim_az = 0;
 
-=======
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
 % Visualize the position of responses (visual system)
 vis_visResp = 0;
 
@@ -547,15 +535,7 @@ if vis_el_global
 end % vis_el_global
 
 
-<<<<<<< HEAD
-%% Visulize rose plots of azimuth wrt speed (vis_az_global)
-=======
-<<<<<<< HEAD
 %% Visulize rose plots of azimuth wrt speed (vis_az_local)
-=======
-%% Visulize rose plots of azimuth wrt speed (vis_az_global)
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
 
 if vis_az_local
     
@@ -633,21 +613,7 @@ if vis_az_local
             wrong_pool = [D.wrong(idx & idx1); D.wrong(idx & idx2)];
             
             % Pool responses (flip response of right eye stim)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
             az_pool    = [-D.azL(idx & idx1); D.azL(idx & idx2)];
-=======
->>>>>>> Arjun's-Edits
-            if do_global
-               az_pool    = [-D.az(idx & idx1); D.az(idx & idx2)]; 
-            else
-               az_pool    = [-D.azL(idx & idx1); D.azL(idx & idx2)]; 
-            end
-<<<<<<< HEAD
-=======
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
             
             subplot(2,3,i+3)
             rose_plot(az_pool,wrong_pool,num_bin)
@@ -657,39 +623,13 @@ if vis_az_local
         else
             % Rose plot for when predator is on right
             subplot(3,3,i+3)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
             rose_plot(D.azL(idx & idx1),D.wrong(idx & idx1),num_bin)
-=======
->>>>>>> Arjun's-Edits
-            if do_global
-                rose_plot(D.az(idx & idx1),D.wrong(idx & idx1),num_bin)
-            else
-                rose_plot(D.azL(idx & idx1),D.wrong(idx & idx1),num_bin)
-            end
-<<<<<<< HEAD
-=======
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
             
             h = title('Predator on right (az)');
             set(h,'Color',clrs2{i})
             
             % Rose plot for when predator on left
             subplot(3,3,i+6)
-<<<<<<< HEAD
-            if do_global
-                rose_plot(D.az(idx & idx2),D.wrong(idx & idx2),num_bin)
-            else
-                rose_plot(D.azL(idx & idx2),D.wrong(idx & idx2),num_bin)
-            end
-            
-            h = title('Predator on left (az)');
-            set(h,'Color',clrs3{i})
-        end
-=======
-<<<<<<< HEAD
             rose_plot(D.azL(idx & idx2),D.wrong(idx & idx2),num_bin)
             
             h = title('Predator on left (az)');
@@ -714,7 +654,7 @@ if vis_az_global
     for i = 1:3       
         
         % Index for current speed
-        idx = (D.behav=='f') & (D.spd==spds(i));
+        idx = ((D.behav=='f') | (D.behav=='s')) & (D.spd==spds(i));
         
         % Index for larvae that are left of the predator
         idx1 = D.com(:,2) >= 0;
@@ -798,18 +738,6 @@ if vis_az_global
             h = title('Predator on left (az)');
             set(h,'Color',clrs3{i})
         end
-=======
-            if do_global
-                rose_plot(D.az(idx & idx2),D.wrong(idx & idx2),num_bin)
-            else
-                rose_plot(D.azL(idx & idx2),D.wrong(idx & idx2),num_bin)
-            end
-            
-            h = title('Predator on left (az)');
-            set(h,'Color',clrs3{i})
-        end
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
     end
     
     clear az_pool
@@ -824,29 +752,13 @@ if vis_az_binoc
     figure
     
     % Index for binocular stimulus
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    idxB = D.binoc & ((D.behav=='f') | (D.behav=='s'));
+    idxB = D.binoc & (D.behav=='s');
     
     % Index for left eye
-    idxL = ~D.binoc & ~isnan(D.LazCent) & ((D.behav=='f') | (D.behav=='s'));
+    idxL = ~D.binoc & ~isnan(D.LazCent) & (D.behav=='s');
     
     % Index for right eye
-    idxR = ~D.binoc & ~isnan(D.RazCent) & ((D.behav=='f') | (D.behav=='s'));
-=======
->>>>>>> Arjun's-Edits
-    idxB = D.binoc & ~(D.behav=='f');
-    
-    % Index for left eye
-    idxL = ~D.binoc & ~isnan(D.LazCent) & ~(D.behav=='f');
-    
-    % Index for right eye
-    idxR = ~D.binoc & ~isnan(D.RazCent) & ~(D.behav=='f');
-<<<<<<< HEAD
-=======
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
+    idxR = ~D.binoc & ~isnan(D.RazCent) & (D.behav=='s');
     
     % Loop thru individuals
     for j = 1:length(D.spd)
@@ -869,15 +781,9 @@ if vis_az_binoc
         h = plot([D.com(j,1) D.com2(j,1)],...
             [D.com(j,2) D.com2(j,2)],'-');
         set(h,'Color','r')
-<<<<<<< HEAD
     end
     
     axis equal; xlabel('X'); ylabel('Y');
-=======
-    end
-    
-    axis equal; xlabel('X'); ylabel('Y');
-<<<<<<< HEAD
     
     % Title
     if do_global
@@ -955,107 +861,6 @@ if vis_az_binoc
         grid on
         axis equal
     end
-=======
->>>>>>> Arjun's-Edits
-    
-    % Title
-    if do_global
-        title(['Global FOR'])
-    else
-        title(['Local FOR'])
-    end
-    
-    
-    % Rose plots (global FOR)
-    if do_global
-        subplot(2,3,4)
-        rose_plot(D.az(idxB),D.wrong(idxB),num_bin)
-        title('Binocular stimulus')
-        
-        subplot(2,3,5)
-        rose_plot(D.az(idxL),D.wrong(idxL),num_bin)
-        title('Left eye stimulus')
-        
-        subplot(2,3,6)
-        rose_plot(D.az(idxR),D.wrong(idxR),num_bin)
-        title('Right eye stimulus')
-<<<<<<< HEAD
-        
-        % Rose plots (local FOR)
-    else
-        subplot(2,3,4)
-        rose_plot(D.azL(idxB),D.wrong(idxB),num_bin)
-        title('Binocular stimulus')
-        
-=======
-        
-        % Rose plots (local FOR)
-    else
-        subplot(2,3,4)
-        rose_plot(D.azL(idxB),D.wrong(idxB),num_bin)
-        title('Binocular stimulus')
-        
->>>>>>> Arjun's-Edits
-        subplot(2,3,5)
-        rose_plot(D.azL(idxL),D.wrong(idxL),num_bin)
-        title('Left eye stimulus')
-        
-        subplot(2,3,6)
-        rose_plot(D.azL(idxR),D.wrong(idxR),num_bin)
-        title('Right eye stimulus')
-        
-    end
-<<<<<<< HEAD
-    
-    % Scatterplots of response wrt stimulus -------------------------------
-    
-    % Make figure window
-    figure
-    
-=======
-    
-    % Scatterplots of response wrt stimulus -------------------------------
-    
-    % Make figure window
-    figure
-    
->>>>>>> Arjun's-Edits
-    subplot(2,2,1)
-    plot(D.LazCent(idxB),D.az(idxB),'or', D.LazCent(idxL),D.az(idxL),'ob')
-    xlabel('angle of stimulus')
-    ylabel('Azimuth of resposne (global)')
-    title('Left Eye: GLOBAL')
-    legend('Binoc','One eye')
-    grid on
-    axis equal
-    
-    subplot(2,2,3)
-    plot(D.LazCent(idxB),D.azL(idxB),'or', D.LazCent(idxL),D.azL(idxL),'ob')
-    xlabel('angle of stimulus')
-    ylabel('Azimuth of response (local)')
-    title('Left Eye: LOCAL')
-    grid on
-    axis equal
-    
-    subplot(2,2,2)
-    plot(D.RazCent(idxB),D.az(idxB),'or',D.RazCent(idxR),D.az(idxR),'ob')
-    xlabel('angle of stimulus')
-    ylabel('Azimuth of resposne (global)')
-    title('Right Eye: GLOBAL')
-    grid on
-    axis equal
-    
-    subplot(2,2,4)
-    plot(D.RazCent(idxB),D.azL(idxB),'or',D.RazCent(idxR),D.azL(idxR),'ob')
-    xlabel('angle of stimulus')
-    ylabel('Azimuth of response (local)')
-    title('Right Eye: LOCAL')
-    grid on
-    axis equal
-<<<<<<< HEAD
-=======
->>>>>>> FETCH_HEAD
->>>>>>> Arjun's-Edits
     
     clear idxB idxR idxL
 end % vis_az_global
