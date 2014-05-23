@@ -1,4 +1,5 @@
 function model_vision
+% Models the visual stimulus for each experiment.
 
 
 %% Set paths
