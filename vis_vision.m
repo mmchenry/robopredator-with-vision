@@ -6,9 +6,9 @@ function vis_vision
 
 % This should be specific to each computer that executes this code
 if isdir('/Users/mmchenry/')
-    root = '/Users/mmchenry/Dropbox/Projects/Robopredator with vision';
+    root = '/Users/mmchenry/Documents/Projects/Robopredator with vision';
 else
-    error('Replace this line of code with a root definition')
+    root = '/Users/arjunnair0513/Dropbox/Shared with Arjun';
 end
 
 
@@ -26,6 +26,9 @@ vis_clean = 1;
 
 % Color of 3D rendering of predator
 p_clr = .5.*[1 1 1];
+
+% Color of 3D rendering of prey
+py_clr = .5.*[1 1 1];
 
 % Colors for the 3 speeds
 sp_clr(1,:) = [0 0 1];
@@ -60,10 +63,10 @@ verg_ang = 32/180*pi;
 theta = linspace(0,2*pi,vis_num)';
 
 % Which approach speed from which to choose a sequence to visualize
-spd_num = 1;
+spd_num = 2;
 
 % Indivual to visualize
-indiv_num = 1;
+indiv_num = 10;
 
 % Grid color
 g_clr = .5.*[1 1 1];
@@ -141,7 +144,7 @@ for i = 1:length(pred_pos)
     
     % Render the prey in 3D
     if i==1
-        hPrey = render_surf(Xprey,Yprey,Zprey,p_clr,light_on);
+        hPrey = render_surf(Xprey,Yprey,Zprey,py_clr,light_on);
     end
     
     % Set title (time)
@@ -152,7 +155,7 @@ for i = 1:length(pred_pos)
         xlabel('X'); ylabel('Y');zlabel('Z')
     else
         grid off
-        set(gca,'Color',.2.*[1 1 1]) 
+        set(gca,'Color',0.*[1 1 1]) 
         set(gca,'XTickLabel',' ')
         set(gca,'YTickLabel',' ')
         set(gca,'ZTickLabel',' ')
@@ -164,6 +167,10 @@ for i = 1:length(pred_pos)
         axis tight
         xL = xlim;
         pos1 = get(gca,'Position');
+    else
+        axis equal
+        axis tight
+        xlim(xL)
     end
     
     % Render the predator in 3D from above
@@ -176,7 +183,7 @@ for i = 1:length(pred_pos)
     
     % Render the prey in 3D
     if i==1
-        hPrey = render_surf(Xprey,Yprey,Zprey,p_clr,light_on);
+        hPrey = render_surf(Xprey,Yprey,Zprey,py_clr,light_on);
     end
     
     % Set axis appearence
@@ -184,10 +191,11 @@ for i = 1:length(pred_pos)
         xlabel('X'); ylabel('Y');zlabel('Z')
     else
         grid off
-        set(gca,'Color',.2.*[1 1 1]) 
+        set(gca,'Color',0.*[1 1 1]) 
         set(gca,'XTickLabel',' ')
         set(gca,'YTickLabel',' ')
         set(gca,'ZTickLabel',' ')
+
     end
     view([0 90])
     
@@ -197,6 +205,10 @@ for i = 1:length(pred_pos)
         xlim(xL)
         pos2 = get(gca,'Position');
         set(gca,'Position',[pos2(1) pos2(2) pos1(3) pos1(4)]);
+    else
+        axis equal
+        axis tight
+        xlim(xL)
     end
     
     
@@ -213,7 +225,7 @@ for i = 1:length(pred_pos)
     %set(gca,'YDir','normal')
     hT = title('Left');
     if vis_clean
-        set(hT,'Color',.5*[1 1 1])
+        set(hT,'Color',0*[1 1 1])
     end
     axis tight
     hold off
@@ -231,11 +243,11 @@ for i = 1:length(pred_pos)
     hold off
     hT = title('Right');
     if vis_clean
-        set(hT,'Color',.5*[1 1 1])
+        set(hT,'Color',0*[1 1 1])
     end
     axis tight
     
-    pause(.01)
+    pause(.001)
     
     % Save image (Frame)
     if save_images

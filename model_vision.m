@@ -5,7 +5,8 @@ function model_vision
 %% Set paths
 
 % This should be specific to each computer that executes this code
-root = '/Users/mmchenry/Dropbox/Projects/Robopredator with vision';
+root = '/Users/mmchenry/Documents/Projects/Robopredator with vision';
+
 
 %% Code execution
 
@@ -214,7 +215,7 @@ for i = 1:3
             warning on
             
             % Find coordinates, if any present
-            if ~isempty(R_th)
+            if ~isempty(R_th) && ~isempty(R_dt.ConnectivityList)
                 % Identify points in the triangulation
                 R_id = pointLocation(R_dt,F(i).R_azField(:),F(i).R_elField(:));
             else
@@ -222,7 +223,7 @@ for i = 1:3
             end
             
             % Find coordinates, if any present
-            if ~isempty(L_th)
+            if ~isempty(L_th) && ~isempty(L_dt.ConnectivityList)
                 % Identify points in the triangulation
                 L_id = pointLocation(L_dt,F(i).L_azField(:),F(i).L_elField(:));
 

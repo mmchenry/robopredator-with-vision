@@ -10,34 +10,69 @@ function pool_kelsey
 % Pool raw data from CSV files created by DLT Viewer
 pool_raw = 1;
 
+% Include non-responders
+include_nonresponders = 0;
+
+% Visualize results from individual video sequences 
+vis_files = 0;
+
+% Pool frame number data
+pool_frames = 0;
+
+% Visualized pooled results
+vis_pooled = 0;
+
 
 %% Paths
 
 % This should be specific to each computer that executes this code
-root = '/Users/arjunnair0513/Dropbox/Shared with Arjun';
+%root = '/Users/arjunnair0513/Dropbox/Shared with Arjun';
+root = '/Users/mmchenry/Documents/Projects/robopredator with vision/';
 
 % Sequences providing response data for 2 cm/s
 dirs{1} = {['July_24' filesep '1'],...
-           ['July_30' filesep '1']};  
+           ['July_30' filesep '1'],...
+           ['July_24' filesep '2'],...
+           ['July_24' filesep '3'],...
+           ['July_24' filesep '4'],...
+           ['July_24' filesep '5'],...
+           ['July_24' filesep '6'],...
+           ['July_24' filesep '7'],...
+           ['July_24' filesep '8'],...
+           ['July_24' filesep '9'],...
+           };  
 
 % Sequences providing response data for 11 cm/s
 dirs{2} = {['July_23' filesep '1'],...
            ['July_23' filesep '3'],...
-           ['July_23' filesep '4']};  
+           ['July_23' filesep '4'],...
+           ['July_23' filesep '2'],...
+           ['July_23' filesep '5'],...
+           ['July_23' filesep '6'],...
+           ['July_23' filesep '7'],...
+           ['July_23' filesep '8'],...
+           ['July_23' filesep '9'],...
+           };  
 
 % Sequences providing response data for 20 cm/s
 dirs{3} = {['July_22' filesep '1'],...
            ['July_22' filesep '2'],...
-           ['July_22' filesep '3']};
+           ['July_22' filesep '3'],...
+           ['July_22' filesep '4'],...
+           ['July_22' filesep '5'],...
+           ['July_22' filesep '6'],...
+           ['July_22' filesep '7'],...
+           ['July_22' filesep '8'],...
+           };
 
 % Filename for responder data
 resp_name = 'DLTdv5_data_xyzpts.csv';
 
 % Filename for bubble data
-bubble_name = 'bubbles_xyzpts.csv';
+%bubble_name = 'bubbles_xyzpts.csv';
 
 % Filename for larval trajectory
-traj_name = 'larvae_track_xyzpts.csv';
+%traj_name = 'larvae_track_xyzpts.csv';
 
 % Filename for pooled rawdata
 pooled_name = 'pooled_rawdata.mat';
@@ -49,7 +84,8 @@ transformed_name = 'pooled_transdata.mat';
 no_name = 'noResponse_xyzpts.csv';
        
 % End of stage 2 postion filename
-reac_name = 'response_xyzpts.csv';
+%reac_name = 'response_xyzpts.csv';
+reac_name = 'reactionxyzpts.csv';
 
 
 %% Parameter values
@@ -58,18 +94,37 @@ reac_name = 'response_xyzpts.csv';
 spds = [2 11 20];  
 
 % Coding of behavioral responses for 2 cm/s
-responses{1}{1} = 'scssfcssssssssssfsfsfssffsfsssfsfffsssfffssfssssfffffsffssfs';
-responses{1}{2} = 'sssssssssssssssfssssssssssssssssssssss';
+responses{1}{1}   = 'scssfcssssssssssfsfsfssffsfsssfsfffsssfffssfssssfffffsffssfs';
+responses{1}{2}   = 'sssssssssssssssfssssssssssssssssssssss';
+responses{1}{3}   = 'ssfffssfsfsssfffsff';
+responses{1}{4}   = 'sffffssffsfffsssssffsfffsfs';
+responses{1}{5}   = 'ffsfssffsffsfssssfsffsf';
+responses{1}{6}   = 'sfssffsssssssssssssssfss';
+responses{1}{7}   = 'fssssffssssfssss';
+responses{1}{8}   = 'fsfsffsssssfsfs';
+responses{1}{9}   = 'fsfsssssssfsf';
+responses{1}{10}  = 'sssssfsfsssssfff';
 
 % Coding of behavioral responses for 11 cm/s
-responses{2}{1} = 'fscfsffffsfsssssssssssccsstssstssf';
-responses{2}{2} = 'tffsffffffsfssssfffssfsfsssscfss';
-responses{2}{3} = 'sssfssfsfffstfffffffffffssssffscssfs';
+responses{2}{1}  = 'fscfsffffsfsssssssssssccsstssstssf';
+responses{2}{2}  = 'tffsffffffsfssssfffssfsfsssscfss';
+responses{2}{3}  = 'sssfssfsfffstfffffffffffssssffscssfs';
+responses{2}{4}  = 'ffssffffssffssssssfssfffs';
+responses{2}{5}  = 'fffsfffffffffffsffff';
+responses{2}{6}  = 'ffffsfffsffffsff';
+responses{2}{7}  = 'fsfffffsffffsssffsfssf';
+responses{2}{8}  = 'fsfffffffsfsfffsfffff';
+responses{2}{9}  = 'fffsfsfffsfsffsffffsffffffffff';
 
 % Coding of behavioral responses for 20 cm/s
 responses{3}{1} = 'ssssffffffossfffsfssssssfsffssfs';
 responses{3}{2} = 'sssssssssfsstssstcsfsssfsss';
 responses{3}{3} = 'cffffffsccssscfssfsfssffsfcssfcssstcsssfftsf';
+responses{3}{4} = 'ffffsssfsffsfsfssssff';
+responses{3}{5} = 'fffsfsfffssfffffsfffffsffffffs';
+responses{3}{6} = 'sfffsfffssssssfffffff';
+responses{3}{7} = 'fffsfffsffffsssffff';
+responses{3}{8} = 'ffsffffsffffsffsfsfsffff';
 
 % The sequence number for the which the predator coordinates for 2 cm/s
 pred_seq_num(1,1) = 1;
@@ -94,6 +149,10 @@ com_pos = 0.1765;
 % Frame rate of kelsey's experiments
 fps = 250;
 
+% Colors for plots
+clrs = {'k','k','k'};
+clrs2 = {'r','r','r'};
+
 
 %% Pool raw data: Extract predator & bubble coordinates
 
@@ -114,12 +173,26 @@ for i = 1:3
     
     % Non-nans in first non-nan row
     r = M(iNonNan(1),~isnan(M(iNonNan(1),:)));
-       
+      
+    % Get bubble filename
+    bubble = dir([root filesep 'kelsey rawdata'  filesep dirs{i}{1} ...
+                      filesep 'bubbles_*xyzpts.csv']);
+    if length(bubble)~=1
+        error('wrong number of "bubble" files');
+    end
+    
+    % Get trajectory filename
+    traj = dir([root filesep 'kelsey rawdata'  filesep dirs{i}{1} ...
+               filesep 'larvae_track_*xyzpts.csv']);
+    if length(traj)~=1
+        error('wrong number of "track" files');
+    end
+           
     % Read CSV data for Bubble data for current sequence
-    B = csvread([root filesep 'kelsey rawdata'  filesep dirs{i}{1} filesep bubble_name],1,0);
+    B = csvread([root filesep 'kelsey rawdata'  filesep dirs{i}{1} filesep bubble.name],1,0);
     
     % Read CSV data for Larval tracking data for current sequence
-    T = csvread([root filesep 'kelsey rawdata'  filesep dirs{i}{1} filesep traj_name],1,0);
+    T = csvread([root filesep 'kelsey rawdata'  filesep dirs{i}{1} filesep traj.name],1,0);
     
     % index on non-nan rows
     iT = sum((~isnan(T)),2)~=0;
@@ -158,6 +231,11 @@ for i = 1:3
     
     % Loop through each sequence
     for j = 1:length(dirs{i})      
+        
+        
+        if vis_files
+            figure
+        end
         
         % Get response data
         resp = [responses{i}{j}]';
@@ -204,8 +282,14 @@ for i = 1:3
         
         % Check size
         if size(heads2,1) ~= size(heads,1)
-            warning([dirs{i}{j} ': mismatching number of pre-response' ...
-                    'and stage 2 data'])
+            warning([dirs{i}{j} ': pre-response- ' num2str(size(heads,1)) ...
+                    ' coords, stage 2- ' num2str(size(heads2,1))]);
+        end
+        
+        % Check size of coordinates against behavior
+        if length(resp)~=length(heads)
+            warning([dirs{i}{j} ': Behavior- ' num2str(length(resp)) ' larvae, Coords- ' ...
+                     num2str(length(heads)) ' larvae'])
         end
         
         % Store results for current sequence
@@ -216,6 +300,50 @@ for i = 1:3
         d(i).com2    = [d(i).com2; com2];
         d(i).behav   = [d(i).behav; resp];
         d(i).frames2 = [d(i).frames2; frames2];
+        
+        
+        
+        if vis_files
+            
+            for k = 1:length(heads)
+                
+                subplot(2,1,1) %-------------------------------
+                h = plot([heads(k,1) tails(k,1)],...
+                    [heads(k,2) tails(k,2)],'-');
+                set(h,'Color',clrs{i})
+                hold on
+                h = plot(heads(k,1),heads(k,2),'o');
+                set(h,'Color',clrs{i})
+                
+                h = plot([heads(k,1) heads2(k,1)],...
+                    [heads(k,2) heads2(k,2)],'-');
+                set(h,'Color',clrs2{i})
+                
+                
+                axis equal
+                
+                
+                subplot(2,1,2) %-------------------------------
+                h = plot([heads(k,1) tails(k,1)],...
+                    [heads(k,3) tails(k,3)],'-');
+                set(h,'Color',clrs{i})
+                hold on
+                
+                h = plot(heads(k,1),heads(k,3),'o');
+                set(h,'Color',clrs{i})
+                
+                h = plot([heads(k,1) heads2(k,1)],...
+                    [heads(k,3) heads2(k,3)],'-');
+                set(h,'Color',clrs2{i})
+                
+                axis equal
+                xlabel('X'); ylabel('Z')
+            end
+            
+            subplot(2,1,1)
+            title(dirs{i}{j})
+        end
+        
  
 %         disp = sqrt( (heads(:,1)-heads2(:,1)).^2 + ...
 %                      (heads(:,2)-heads2(:,2)).^2 + ...
@@ -224,19 +352,22 @@ for i = 1:3
         % Clear variables
         clear M k iNonNan heads tails k r numLarva L com2 heads2 indiv1 indiv2
         clear resp dur_resp
-    end
-    
+        
+        
+        end
+
     % Check data
-    if size(d(i).head,1) ~= length(d(i).behav)
-        error('Unequal numbers of behavior and coordinate vectors')
-    end
-    
+        if size(d(i).head,1) ~= length(d(i).behav)
+            error('Unequal numbers of behavior and coordinate vectors')
+        end
     clear j 
 end
 
 
 
 %% Pool raw data: Load and store non-responses
+
+if include_nonresponders
 
 % Loop through each speed
 for i = 1:3
@@ -300,6 +431,7 @@ for i = 1:3
     clear j 
 end
 
+end
 
 
 %% Pool raw data: Save pooled data
@@ -307,6 +439,7 @@ end
 
 % Save pooled data
 save([root filesep 'kelsey data' filesep pooled_name],'d')
+
 
 end
 
@@ -376,21 +509,23 @@ for i = 1:3
     head_pts2(:,1) = head_pts2(:,1) + pred_disp;
     com_pts2(:,1)  = com_pts2(:,1) + pred_disp;
         
-    % Translate non-responder data wrt predator
-    head_pts_non = bsxfun(@minus,d(i).head_non,d(i).pred);
-    tail_pts_non = bsxfun(@minus,d(i).tail_non,d(i).pred);
-    
-    % Rotate responder data
-    head_pts_non = (R*(head_pts_non'))';
-    tail_pts_non = (R*(tail_pts_non'))';
-    
-    % Rotate responder data wrt angle chosen by eye
-    head_pts_non =  ([1 0 0;...
-                  0 cosd(ang_corr(i)) -sind(ang_corr(i));...
-                  0 sind(ang_corr(i)) cosd(ang_corr(i))]*head_pts_non')';
-    tail_pts_non =  ([1 0 0;...
-                  0 cosd(ang_corr(i)) -sind(ang_corr(i));...
-                  0 sind(ang_corr(i)) cosd(ang_corr(i))]*tail_pts_non')';
+    if include_nonresponders
+        % Translate non-responder data wrt predator
+        head_pts_non = bsxfun(@minus,d(i).head_non,d(i).pred);
+        tail_pts_non = bsxfun(@minus,d(i).tail_non,d(i).pred);
+        
+        % Rotate responder data
+        head_pts_non = (R*(head_pts_non'))';
+        tail_pts_non = (R*(tail_pts_non'))';
+        
+        % Rotate responder data wrt angle chosen by eye
+        head_pts_non =  ([1 0 0;...
+            0 cosd(ang_corr(i)) -sind(ang_corr(i));...
+            0 sind(ang_corr(i)) cosd(ang_corr(i))]*head_pts_non')';
+        tail_pts_non =  ([1 0 0;...
+            0 cosd(ang_corr(i)) -sind(ang_corr(i));...
+            0 sind(ang_corr(i)) cosd(ang_corr(i))]*tail_pts_non')';
+    end
     
     % Loop thru individuals
     for j = 1:size(head_pts,1)    
@@ -439,6 +574,8 @@ for i = 1:3
     L(i).pred     = d(i).pred;
     L(i).R        = R;
     L(i).behav    = d(i).behav;
+    L(i).frames1  = d(i).frames1;
+    L(i).frames2  = d(i).frames2;
     L(i).head     = head_pts;
     L(i).tail     = tail_pts;
     L(i).com      = com_pts;
@@ -448,9 +585,12 @@ for i = 1:3
     L(i).el       = el_G;
     L(i).azL      = az_L;
     L(i).elL      = el_L;
-    L(i).head_non = head_pts_non;
-    L(i).tail_non = tail_pts_non; 
     L(i).wrong    = wrongs;
+    
+    if include_nonresponders
+        L(i).head_non = head_pts_non;
+        L(i).tail_non = tail_pts_non; 
+    end
     
     % Clear for next iteration
     clear tail_ptsL com_ptsL head_pts2L com_pts2L com_pts head_pts_non
@@ -463,15 +603,15 @@ end
 save([root filesep 'kelsey data' filesep transformed_name],'L')
 
 
-%% Visualize results
+%% Visualize pooled results
 
+if vis_pooled
 
 figure
 
-clrs = {'k','k','k'};
-clrs2 = {'r','r','r'};
-
 for i = 1:3
+    
+    figure
     
     for j = 1:size(L(i).head,1)
         
@@ -505,7 +645,10 @@ for i = 1:3
         
         axis equal
         xlabel('X'); ylabel('Z')
+        
     end
+    
+    size(L(i).head,1)
 end
 
 subplot(2,1,1)
@@ -513,6 +656,9 @@ xlabel('X'); ylabel('Y')
 
 subplot(2,1,2)
 xlabel('X'); ylabel('Z')
+
+end
+
 
 
 function [indiv,frames,pt1,pt2] = csv_import(file_path)
@@ -607,7 +753,6 @@ while i < (size(M,2)+1)
     end  
 end
     
-
 
 function [xT,yT,zT] = global_to_local_matrix(rost,tail,xpts,ypts,zpts)
 % Transforms coordinates (pts, in n x 3) from global to local coordinate
@@ -819,9 +964,6 @@ if 0
     xlabel('x');ylabel('z')
     grid on; axis equal
 end
-
-
-
 
 
 function pred_facing = threeDPredTraj(traj_pts)
